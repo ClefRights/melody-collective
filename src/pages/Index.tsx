@@ -1,14 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
-  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSignup = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Signup functionality will be available soon!",
-    });
+    navigate("/signup");
   };
 
   return (
