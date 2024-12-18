@@ -11,6 +11,19 @@ const SignupForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isPROmember, setIsPROmember] = useState<string>("no");
+  const [writerShare, setWriterShare] = useState<string>("45");
+  const [publisherShare, setPublisherShare] = useState<string>("55");
+
+  const handleShareChange = (value: string, type: 'writer' | 'publisher') => {
+    const numValue = parseInt(value) || 0;
+    if (type === 'writer') {
+      setWriterShare(value);
+      setPublisherShare((100 - numValue).toString());
+    } else {
+      setPublisherShare(value);
+      setWriterShare((100 - numValue).toString());
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,9 +64,29 @@ const SignupForm = () => {
                 type="number" 
                 min="0" 
                 max="100" 
+                value={writerShare}
+                onChange={(e) => handleShareChange(e.target.value, 'writer')}
                 placeholder="Enter writer's share percentage" 
                 required 
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="publisherShare">Publisher's Share (ClefRights) (%)</Label>
+              <Input 
+                id="publisherShare" 
+                name="publisherShare"
+                type="number" 
+                min="0" 
+                max="100" 
+                value={publisherShare}
+                onChange={(e) => handleShareChange(e.target.value, 'publisher')}
+                placeholder="Enter publisher's share percentage" 
+                required 
+              />
+              <p className="text-sm text-muted-foreground mt-2">
+                If you wish to not have any role in administering your song, you may assign 100% to ClefRights. 
+                If you do this, you will not have to pay publisher registration or filing fees.
+              </p>
             </div>
             <div className="space-y-2">
               <Label>Are you a member of a PRO?</Label>
