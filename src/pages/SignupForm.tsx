@@ -11,9 +11,9 @@ const SignupForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isPROmember, setIsPROmember] = useState<string>("no");
-  const [writerShare, setWriterShare] = useState<string>("45");
-  const [userPublisherShare, setUserPublisherShare] = useState<string>("0");
-  const clefRightsShare = "55";
+  const [writerShare, setWriterShare] = useState<string>("100");
+  const [userPublisherShare, setUserPublisherShare] = useState<string>("45");
+  const [clefRightsShare, setClefRightsShare] = useState<string>("55");
 
   const handleShareChange = (value: string) => {
     const numValue = parseInt(value) || 0;
@@ -34,14 +34,16 @@ const SignupForm = () => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const needsPROFee = formData.get("proMembership") === "no";
+    const finalPublisherShare = userPublisherShare === "0" ? "100" : clefRightsShare;
     
-    toast({
-      title: "Agreement Submitted",
-      description: needsPROFee 
-        ? "Thank you for submitting! Note: A PRO membership fee will be added during payment."
-        : "Thank you for submitting your co-publishing agreement!",
-    });
-    navigate("/");
+    if (userPublisherShare === "0") {
+      toast({
+        title: "Publishing Rights Assignment",
+        description: "You have assigned 100% of publishing rights to ClefRights. No publisher registration fees will be charged.",
+      });
+    }
+    
+    navigate("/rights-clearance");
   };
 
   return (
@@ -68,7 +70,7 @@ const SignupForm = () => {
                 name="writerShare"
                 type="number" 
                 min="0" 
-                max="45" 
+                max="100" 
                 value={writerShare}
                 readOnly
                 className="bg-gray-100"
