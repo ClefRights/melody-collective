@@ -12,16 +12,21 @@ const SignupForm = () => {
   const navigate = useNavigate();
   const [isPROmember, setIsPROmember] = useState<string>("no");
   const [writerShare, setWriterShare] = useState<string>("45");
-  const [publisherShare, setPublisherShare] = useState<string>("55");
+  const [userPublisherShare, setUserPublisherShare] = useState<string>("0");
+  const clefRightsShare = "55";
 
-  const handleShareChange = (value: string, type: 'writer' | 'publisher') => {
+  const handleShareChange = (value: string) => {
     const numValue = parseInt(value) || 0;
-    if (type === 'writer') {
-      setWriterShare(value);
-      setPublisherShare((100 - numValue).toString());
+    if (numValue > 45) {
+      toast({
+        title: "Invalid Share Percentage",
+        description: "Your publisher share cannot exceed 45% as ClefRights maintains 55% of publishing rights.",
+        variant: "destructive"
+      });
+      setUserPublisherShare("45");
     } else {
-      setPublisherShare(value);
-      setWriterShare((100 - numValue).toString());
+      setUserPublisherShare(value);
+      setWriterShare((45 - numValue).toString());
     }
   };
 
@@ -63,28 +68,41 @@ const SignupForm = () => {
                 name="writerShare"
                 type="number" 
                 min="0" 
-                max="100" 
+                max="45" 
                 value={writerShare}
-                onChange={(e) => handleShareChange(e.target.value, 'writer')}
-                placeholder="Enter writer's share percentage" 
+                readOnly
+                className="bg-gray-100"
+                placeholder="Writer's share percentage" 
                 required 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="publisherShare">Publisher's Share (ClefRights) (%)</Label>
+              <Label htmlFor="clefRightsShare">ClefRights Publisher Share (%)</Label>
               <Input 
-                id="publisherShare" 
-                name="publisherShare"
+                id="clefRightsShare" 
+                name="clefRightsShare"
+                type="number" 
+                value={clefRightsShare}
+                readOnly
+                className="bg-gray-100"
+                required 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="userPublisherShare">Your Publisher Share (%)</Label>
+              <Input 
+                id="userPublisherShare" 
+                name="userPublisherShare"
                 type="number" 
                 min="0" 
-                max="100" 
-                value={publisherShare}
-                onChange={(e) => handleShareChange(e.target.value, 'publisher')}
-                placeholder="Enter publisher's share percentage" 
+                max="45" 
+                value={userPublisherShare}
+                onChange={(e) => handleShareChange(e.target.value)}
+                placeholder="Enter your publisher share percentage" 
                 required 
               />
               <p className="text-sm text-muted-foreground mt-2">
-                If you wish to not have any role in administering your song, you may assign 100% to ClefRights. 
+                If you wish to not have any role in administering your song, you may leave this as 0% and assign full publishing rights to ClefRights. 
                 If you do this, you will not have to pay publisher registration or filing fees.
               </p>
             </div>
