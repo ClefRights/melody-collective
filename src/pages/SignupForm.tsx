@@ -44,10 +44,14 @@ const SignupForm = () => {
     }
     
     // Navigate based on PRO membership status
-    if (isPROmember === "no") {
-      navigate("/pro-selection");
+    if (isPROmember === "yes") {
+      navigate("/publishing-company", { 
+        state: { 
+          proName: (e.target as HTMLFormElement).proName.value 
+        } 
+      });
     } else {
-      navigate("/rights-clearance");
+      navigate("/pro-selection");
     }
   };
 
