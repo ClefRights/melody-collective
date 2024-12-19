@@ -43,7 +43,12 @@ const SignupForm = () => {
       });
     }
     
-    navigate("/rights-clearance");
+    // Navigate based on PRO membership status
+    if (isPROmember === "no") {
+      navigate("/pro-selection");
+    } else {
+      navigate("/rights-clearance");
+    }
   };
 
   return (

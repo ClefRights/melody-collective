@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import SignupForm from "./pages/SignupForm";
 import RightsClearance from "./pages/RightsClearance";
+import PROSelection from "./pages/PROSelection";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/signup" element={<SignupForm />} />
+          <Route path="/pro-selection" element={<PROSelection />} />
           <Route path="/rights-clearance" element={<RightsClearance />} />
         </Routes>
       </BrowserRouter>
