@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
@@ -11,23 +10,8 @@ const Index = () => {
     navigate("/signup");
   };
 
-  const handlePayment = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout-session');
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to initiate payment. Please try again.",
-        variant: "destructive"
-      });
-    }
+  const handlePayment = () => {
+    navigate("/signup", { state: { fromPurchase: true } });
   };
 
   return (

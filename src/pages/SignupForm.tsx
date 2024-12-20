@@ -3,20 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import PRORadioGroup from "@/components/forms/PRORadioGroup";
 import PRODetailsForm from "@/components/forms/PRODetailsForm";
+import { supabase } from "@/integrations/supabase/client";
 
 const SignupForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isPROmember, setIsPROmember] = useState<string>("no");
   const [writerShare, setWriterShare] = useState<string>("100");
   const [userPublisherShare, setUserPublisherShare] = useState<string>("45");
   const [clefRightsShare, setClefRightsShare] = useState<string>("55");
   const [proName, setProName] = useState("");
   const [proNumber, setProNumber] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleShareChange = (value: string) => {
     const numValue = parseInt(value) || 0;
@@ -33,16 +36,47 @@ const SignupForm = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isPROmember === "yes") {
-      navigate("/publishing-company", { 
-        state: { 
-          proName: proName 
-        } 
+  const handlePayment = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout-session');
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initiate payment. Please try again.",
+        variant: "destructive"
       });
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    if (location.state?.fromPurchase) {
+      await handlePayment();
     } else {
-      navigate("/pro-selection");
+      if (isPROmember === "yes") {
+        navigate("/publishing-company", { 
+          state: { 
+            proName: proName,
+            fromPurchase: location.state?.fromPurchase 
+          } 
+        });
+      } else {
+        navigate("/pro-selection", {
+          state: {
+            fromPurchase: location.state?.fromPurchase
+          }
+        });
+      }
     }
   };
 
@@ -121,7 +155,9 @@ const SignupForm = () => {
             )}
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">Submit Agreement</Button>
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {location.state?.fromPurchase ? "Proceed to Payment" : "Submit Agreement"}
+            </Button>
           </CardFooter>
         </form>
       </Card>
