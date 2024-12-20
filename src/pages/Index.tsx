@@ -1,11 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSignup = () => {
     navigate("/signup");
+  };
+
+  const handlePayment = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout-session');
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initiate payment. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -14,12 +36,20 @@ const Index = () => {
         <div className="text-center space-y-6 mb-12">
           <h1 className="text-5xl font-bold mb-4 text-[#FFFFF0] font-sans">Welcome to ClefRights</h1>
           <p className="text-xl text-[#FFFFF0]/80 font-light">Manage your music rights with confidence</p>
-          <Button 
-            onClick={handleSignup}
-            className="bg-[#FFFFF0] text-[#4B5D78] hover:bg-[#FFFFF0]/90"
-          >
-            Sign Up Now
-          </Button>
+          <div className="space-x-4">
+            <Button 
+              onClick={handleSignup}
+              className="bg-[#FFFFF0] text-[#4B5D78] hover:bg-[#FFFFF0]/90"
+            >
+              Sign Up Now
+            </Button>
+            <Button 
+              onClick={handlePayment}
+              className="bg-green-500 text-white hover:bg-green-600"
+            >
+              Purchase Rights
+            </Button>
+          </div>
         </div>
 
         <div className="bg-[#FFFFF0] rounded-lg p-8 shadow-lg prose prose-lg max-w-none">
