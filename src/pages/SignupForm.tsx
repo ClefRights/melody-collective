@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import PRORadioGroup from "@/components/forms/PRORadioGroup";
+import PRODetailsForm from "@/components/forms/PRODetailsForm";
 
 const SignupForm = () => {
   const { toast } = useToast();
@@ -14,6 +15,8 @@ const SignupForm = () => {
   const [writerShare, setWriterShare] = useState<string>("100");
   const [userPublisherShare, setUserPublisherShare] = useState<string>("45");
   const [clefRightsShare, setClefRightsShare] = useState<string>("55");
+  const [proName, setProName] = useState("");
+  const [proNumber, setProNumber] = useState("");
 
   const handleShareChange = (value: string) => {
     const numValue = parseInt(value) || 0;
@@ -32,22 +35,10 @@ const SignupForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const needsPROFee = formData.get("proMembership") === "no";
-    const finalPublisherShare = userPublisherShare === "0" ? "100" : clefRightsShare;
-    
-    if (userPublisherShare === "0") {
-      toast({
-        title: "Publishing Rights Assignment",
-        description: "You have assigned 100% of publishing rights to ClefRights. No publisher registration fees will be charged.",
-      });
-    }
-    
-    // Navigate based on PRO membership status
     if (isPROmember === "yes") {
       navigate("/publishing-company", { 
         state: { 
-          proName: (e.target as HTMLFormElement).proName.value 
+          proName: proName 
         } 
       });
     } else {
@@ -117,46 +108,16 @@ const SignupForm = () => {
                 If you do this, you will not have to pay publisher registration or filing fees.
               </p>
             </div>
-            <div className="space-y-2">
-              <Label>Are you a member of a PRO?</Label>
-              <RadioGroup
-                name="proMembership"
-                value={isPROmember}
-                onValueChange={setIsPROmember}
-                className="flex flex-col space-y-1 mt-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="yes" id="pro-yes" />
-                  <Label htmlFor="pro-yes">Yes</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="no" id="pro-no" />
-                  <Label htmlFor="pro-no">No</Label>
-                </div>
-              </RadioGroup>
-            </div>
+
+            <PRORadioGroup isPROmember={isPROmember} setIsPROmember={setIsPROmember} />
             
             {isPROmember === "yes" && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="proName">PRO Name</Label>
-                  <Input 
-                    id="proName" 
-                    name="proName"
-                    placeholder="Enter your PRO name" 
-                    required={isPROmember === "yes"}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="proNumber">PRO Number</Label>
-                  <Input 
-                    id="proNumber" 
-                    name="proNumber"
-                    placeholder="Enter your PRO number" 
-                    required={isPROmember === "yes"}
-                  />
-                </div>
-              </>
+              <PRODetailsForm 
+                proName={proName}
+                proNumber={proNumber}
+                setProName={setProName}
+                setProNumber={setProNumber}
+              />
             )}
           </CardContent>
           <CardFooter>
