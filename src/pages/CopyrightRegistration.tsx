@@ -19,15 +19,17 @@ const CopyrightRegistration = () => {
   const [wantsClefrightsFiling, setWantsClefrightsFiling] = useState<string>("");
   
   const handleContinue = () => {
-    // Redirect to Stripe checkout
-    navigate("/checkout");
+    navigate("/checkout", { 
+      state: { 
+        publisherShare,
+        fromPurchase: location.state?.fromPurchase 
+      }
+    });
   };
 
   const handleResponse = (response: string) => {
     if (response === "no") {
       setWantsClefrightsFiling("");
-      // Reset the form state
-      setWillFileOwn("");
     }
   };
 
@@ -70,6 +72,12 @@ const CopyrightRegistration = () => {
                     <Label htmlFor="file-no">No</Label>
                   </div>
                 </RadioGroup>
+
+                <p className="text-sm text-muted-foreground mt-4">
+                  For reasons of economy, we recommend that composers or songwriters wait until they have enough material 
+                  to submit in batches of ten. The cost of submitting a single work for copyright is $45, while a batch 
+                  of ten works is $85.
+                </p>
               </div>
 
               {willFileOwn === "no" && (
