@@ -27,12 +27,6 @@ const CopyrightRegistration = () => {
     });
   };
 
-  const handleResponse = (response: string) => {
-    if (response === "no") {
-      setWantsClefrightsFiling("");
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#4B5D78] p-4">
       <Card className="w-full max-w-lg">
@@ -87,7 +81,7 @@ const CopyrightRegistration = () => {
                   </Label>
                   <RadioGroup
                     value={wantsClefrightsFiling}
-                    onValueChange={(value) => handleResponse(value)}
+                    onValueChange={setWantsClefrightsFiling}
                     className="flex flex-col space-y-2"
                   >
                     <div className="flex items-center space-x-2">

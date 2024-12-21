@@ -9,6 +9,7 @@ import RightsClearance from "./pages/RightsClearance";
 import PROSelection from "./pages/PROSelection";
 import PublishingCompanyForm from "./pages/PublishingCompanyForm";
 import CopyrightRegistration from "./pages/CopyrightRegistration";
+import Congratulations from "./pages/Congratulations";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/publishing-company" element={<PublishingCompanyForm />} />
           <Route path="/rights-clearance" element={<RightsClearance />} />
           <Route path="/copyright-registration" element={<CopyrightRegistration />} />
+          <Route path="/congratulations" element={<Congratulations />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
