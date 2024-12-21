@@ -39,6 +39,7 @@ const SignupForm = () => {
 
   const handlePayment = async () => {
     try {
+      setIsSubmitting(true);
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: { email }
       });
@@ -55,6 +56,7 @@ const SignupForm = () => {
         description: "Failed to initiate payment. Please try again.",
         variant: "destructive"
       });
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -77,26 +79,8 @@ const SignupForm = () => {
       return;
     }
 
-    if (location.state?.fromPurchase || !isPROmember) {
-      await handlePayment();
-    } else {
-      if (isPROmember === "yes") {
-        navigate("/publishing-company", { 
-          state: { 
-            proName: proName,
-            fromPurchase: location.state?.fromPurchase,
-            email: email
-          } 
-        });
-      } else {
-        navigate("/pro-selection", {
-          state: {
-            fromPurchase: location.state?.fromPurchase,
-            email: email
-          }
-        });
-      }
-    }
+    // Both flows should now trigger payment
+    await handlePayment();
   };
 
   return (
@@ -189,7 +173,7 @@ const SignupForm = () => {
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isSubmitting} className="w-full">
-              {location.state?.fromPurchase ? "Proceed to Payment" : "Submit Agreement"}
+              {isSubmitting ? "Processing..." : "Submit Agreement"}
             </Button>
           </CardFooter>
         </form>

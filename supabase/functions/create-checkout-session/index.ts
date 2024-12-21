@@ -18,7 +18,7 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    console.log('Creating payment session...');
+    console.log('Creating payment session for email:', email);
     const session = await stripe.checkout.sessions.create({
       customer_email: email,
       line_items: [
