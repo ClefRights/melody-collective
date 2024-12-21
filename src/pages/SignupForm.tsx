@@ -19,6 +19,7 @@ const SignupForm = () => {
   const [clefRightsShare, setClefRightsShare] = useState<string>("55");
   const [proName, setProName] = useState("");
   const [proNumber, setProNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleShareChange = (value: string) => {
@@ -38,7 +39,9 @@ const SignupForm = () => {
 
   const handlePayment = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('create-checkout-session');
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { email }
+      });
       
       if (error) throw error;
       
@@ -56,24 +59,40 @@ const SignupForm = () => {
     }
   };
 
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (location.state?.fromPurchase) {
+    if (!validateEmail(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive"
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (location.state?.fromPurchase || !isPROmember) {
       await handlePayment();
     } else {
       if (isPROmember === "yes") {
         navigate("/publishing-company", { 
           state: { 
             proName: proName,
-            fromPurchase: location.state?.fromPurchase 
+            fromPurchase: location.state?.fromPurchase,
+            email: email
           } 
         });
       } else {
         navigate("/pro-selection", {
           state: {
-            fromPurchase: location.state?.fromPurchase
+            fromPurchase: location.state?.fromPurchase,
+            email: email
           }
         });
       }
@@ -89,6 +108,20 @@ const SignupForm = () => {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                required 
+              />
+              <p className="text-sm text-muted-foreground mt-2">
+                Please enter an email that you check regularly. We will use this to communicate with you regarding your work and provide it to the performing rights organizations and the collective management organizations as part of the rights registration process.
+              </p>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="songTitle">Song Title</Label>
               <Input id="songTitle" name="songTitle" placeholder="Enter song title" required />

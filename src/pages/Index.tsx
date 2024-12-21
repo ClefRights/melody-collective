@@ -31,7 +31,7 @@ const Index = () => {
               onClick={handlePayment}
               className="bg-green-500 text-white hover:bg-green-600"
             >
-              Purchase Rights
+              Quick Registration
             </Button>
           </div>
         </div>
