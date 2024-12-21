@@ -3,12 +3,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
+
+interface LocationState {
+  publisherShare?: string;
+  fromPurchase?: boolean;
+}
 
 const RightsClearance = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { publisherShare, fromPurchase } = location.state as LocationState || {};
+  
   const [hasSamples, setHasSamples] = useState<string>("no");
   const [hasMedleys, setHasMedleys] = useState<string>("no");
 
@@ -20,10 +28,14 @@ const RightsClearance = () => {
         title: "Rights Clearance Required",
         description: "Please send proof of rights clearance to publishingassistance@clefrights.com",
       });
-    } else {
-      // Proceed to Stripe checkout
-      navigate("/checkout");
     }
+    
+    navigate("/copyright-registration", { 
+      state: { 
+        publisherShare,
+        fromPurchase 
+      } 
+    });
   };
 
   return (
