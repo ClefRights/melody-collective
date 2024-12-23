@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -10,14 +9,12 @@ interface SignupDetailsFormProps {
   writerShare: string;
   userPublisherShare: string;
   clefRightsShare: string;
-  isSubmitting: boolean;
   setEmail: (value: string) => void;
   setPassword: (value: string) => void;
   setSongTitle: (value: string) => void;
   setWriterName: (value: string) => void;
   setUserPublisherShare: (value: string) => void;
   handleShareChange: (value: string) => void;
-  handleSubmit: (e: React.FormEvent) => void;
 }
 
 const SignupDetailsForm = ({
@@ -28,17 +25,15 @@ const SignupDetailsForm = ({
   writerShare,
   userPublisherShare,
   clefRightsShare,
-  isSubmitting,
   setEmail,
   setPassword,
   setSongTitle,
   setWriterName,
   setUserPublisherShare,
   handleShareChange,
-  handleSubmit,
 }: SignupDetailsFormProps) => {
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -124,10 +119,7 @@ const SignupDetailsForm = ({
           do this, you will not have to pay publisher registration or filing fees.
         </p>
       </div>
-      <Button type="submit" disabled={isSubmitting} className="w-full">
-        {isSubmitting ? "Processing..." : "Submit Agreement"}
-      </Button>
-    </form>
+    </div>
   );
 };
 

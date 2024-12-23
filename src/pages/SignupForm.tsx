@@ -6,6 +6,7 @@ import PRORadioGroup from "@/components/forms/PRORadioGroup";
 import PRODetailsForm from "@/components/forms/PRODetailsForm";
 import LoginForm from "@/components/forms/LoginForm";
 import SignupDetailsForm from "@/components/forms/SignupDetailsForm";
+import { Button } from "@/components/ui/button";
 
 const SignupForm = () => {
   const { toast } = useToast();
@@ -77,7 +78,7 @@ const SignupForm = () => {
           {isLogin ? (
             <LoginForm />
           ) : (
-            <>
+            <form onSubmit={handleSubmit} className="space-y-6">
               <SignupDetailsForm
                 email={email}
                 password={password}
@@ -86,29 +87,28 @@ const SignupForm = () => {
                 writerShare={writerShare}
                 userPublisherShare={userPublisherShare}
                 clefRightsShare={clefRightsShare}
-                isSubmitting={isSubmitting}
                 setEmail={setEmail}
                 setPassword={setPassword}
                 setSongTitle={setSongTitle}
                 setWriterName={setWriterName}
                 setUserPublisherShare={setUserPublisherShare}
                 handleShareChange={handleShareChange}
-                handleSubmit={handleSubmit}
               />
-              <div className="mt-6">
+              <div className="space-y-6">
                 <PRORadioGroup isPROmember={isPROmember} setIsPROmember={setIsPROmember} />
-              </div>
-              {isPROmember === "yes" && (
-                <div className="mt-6">
+                {isPROmember === "yes" && (
                   <PRODetailsForm
                     proName={proName}
                     proNumber={proNumber}
                     setProName={setProName}
                     setProNumber={setProNumber}
                   />
-                </div>
-              )}
-            </>
+                )}
+                <Button type="submit" disabled={isSubmitting} className="w-full">
+                  {isSubmitting ? "Processing..." : "Submit Agreement"}
+                </Button>
+              </div>
+            </form>
           )}
         </CardContent>
       </Card>
