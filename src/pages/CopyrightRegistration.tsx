@@ -4,27 +4,47 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LocationState {
   publisherShare: string;
   fromPurchase?: boolean;
+  email?: string;
 }
 
 const CopyrightRegistration = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { publisherShare } = location.state as LocationState;
+  const { toast } = useToast();
+  const { publisherShare, email } = location.state as LocationState;
   
   const [willFileOwn, setWillFileOwn] = useState<string>("");
   const [wantsClefrightsFiling, setWantsClefrightsFiling] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const handleContinue = () => {
-    navigate("/checkout", { 
-      state: { 
-        publisherShare,
-        fromPurchase: location.state?.fromPurchase 
+  const handleContinue = async () => {
+    setIsSubmitting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { email }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        window.location.href = data.url;
       }
-    });
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initiate payment. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -103,12 +123,13 @@ const CopyrightRegistration = () => {
             onClick={handleContinue}
             className="w-full"
             disabled={
-              publisherShare !== "0" && 
+              isSubmitting ||
+              (publisherShare !== "0" && 
               (willFileOwn === "" || 
-              (willFileOwn === "no" && wantsClefrightsFiling === ""))
+              (willFileOwn === "no" && wantsClefrightsFiling === "")))
             }
           >
-            Continue to Payment
+            {isSubmitting ? "Processing..." : "Continue to Payment"}
           </Button>
         </CardFooter>
       </Card>

@@ -37,30 +37,6 @@ const SignupForm = () => {
     }
   };
 
-  const handlePayment = async () => {
-    try {
-      setIsSubmitting(true);
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { email }
-      });
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Payment error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to initiate payment. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
@@ -79,8 +55,46 @@ const SignupForm = () => {
       return;
     }
 
-    // Both flows should now trigger payment
-    await handlePayment();
+    // If it's Quick Registration (fromPurchase), go straight to payment
+    if (location.state?.fromPurchase) {
+      try {
+        const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+          body: { email }
+        });
+        
+        if (error) throw error;
+        
+        if (data?.url) {
+          window.location.href = data.url;
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to initiate payment. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } else {
+      // For Sign Up Now flow, continue to the next step
+      if (isPROmember === "yes") {
+        navigate("/publishing-company", { 
+          state: { 
+            proName,
+            email,
+            publisherShare: userPublisherShare
+          } 
+        });
+      } else {
+        navigate("/pro-selection", {
+          state: {
+            email,
+            publisherShare: userPublisherShare
+          }
+        });
+      }
+    }
+    setIsSubmitting(false);
   };
 
   return (
