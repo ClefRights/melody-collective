@@ -20,7 +20,9 @@ const SignupForm = () => {
   const [proName, setProName] = useState("");
   const [proNumber, setProNumber] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isLogin = location.state?.isLogin;
 
   const handleShareChange = (value: string) => {
     const numValue = parseInt(value) || 0;
@@ -55,28 +57,29 @@ const SignupForm = () => {
       return;
     }
 
-    // If it's Quick Registration (fromPurchase), go straight to payment
-    if (location.state?.fromPurchase) {
+    if (isLogin) {
       try {
-        const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-          body: { email }
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
-        
+
         if (error) throw error;
-        
-        if (data?.url) {
-          window.location.href = data.url;
-        }
-      } catch (error) {
-        console.error('Payment error:', error);
+
+        navigate("/dashboard");
         toast({
-          title: "Error",
-          description: "Failed to initiate payment. Please try again.",
+          title: "Welcome back!",
+          description: "You have successfully logged in.",
+        });
+      } catch (error: any) {
+        toast({
+          title: "Login failed",
+          description: error.message || "Please check your credentials and try again.",
           variant: "destructive"
         });
       }
     } else {
-      // For Sign Up Now flow, continue to the next step
+      // Regular signup flow
       if (isPROmember === "yes") {
         navigate("/publishing-company", { 
           state: { 
@@ -101,8 +104,10 @@ const SignupForm = () => {
     <div className="min-h-screen flex items-center justify-center bg-[#4B5D78] p-4">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Co-Publishing Agreement</CardTitle>
-          <CardDescription>Enter your details to sign up for co-publishing</CardDescription>
+          <CardTitle>{isLogin ? "Login" : "Co-Publishing Agreement"}</CardTitle>
+          <CardDescription>
+            {isLogin ? "Enter your credentials to access your account" : "Enter your details to sign up for co-publishing"}
+          </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -116,78 +121,92 @@ const SignupForm = () => {
                 placeholder="Enter your email address"
                 required 
               />
-              <p className="text-sm text-muted-foreground mt-2">
-                Please enter an email that you check regularly. We will use this to communicate with you regarding your work and provide it to the performing rights organizations and the collective management organizations as part of the rights registration process.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="songTitle">Song Title</Label>
-              <Input id="songTitle" name="songTitle" placeholder="Enter song title" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="writerName">Writer's Name</Label>
-              <Input id="writerName" name="writerName" placeholder="Enter writer's name" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="writerShare">Writer's Share (%)</Label>
-              <Input 
-                id="writerShare" 
-                name="writerShare"
-                type="number" 
-                min="0" 
-                max="100" 
-                value={writerShare}
-                readOnly
-                className="bg-gray-100"
-                placeholder="Writer's share percentage" 
-                required 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="clefRightsShare">ClefRights Publisher Share (%)</Label>
-              <Input 
-                id="clefRightsShare" 
-                name="clefRightsShare"
-                type="number" 
-                value={clefRightsShare}
-                readOnly
-                className="bg-gray-100"
-                required 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="userPublisherShare">Your Publisher Share (%)</Label>
-              <Input 
-                id="userPublisherShare" 
-                name="userPublisherShare"
-                type="number" 
-                min="0" 
-                max="45" 
-                value={userPublisherShare}
-                onChange={(e) => handleShareChange(e.target.value)}
-                placeholder="Enter your publisher share percentage" 
-                required 
-              />
-              <p className="text-sm text-muted-foreground mt-2">
-                If you wish to not have any role in administering your song, you may leave this as 0% and assign full publishing rights to ClefRights. 
-                If you do this, you will not have to pay publisher registration or filing fees.
-              </p>
             </div>
 
-            <PRORadioGroup isPROmember={isPROmember} setIsPROmember={setIsPROmember} />
-            
-            {isPROmember === "yes" && (
-              <PRODetailsForm 
-                proName={proName}
-                proNumber={proNumber}
-                setProName={setProName}
-                setProNumber={setProNumber}
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input 
+                id="password" 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required 
               />
+            </div>
+
+            {!isLogin && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="songTitle">Song Title</Label>
+                  <Input id="songTitle" name="songTitle" placeholder="Enter song title" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="writerName">Writer's Name</Label>
+                  <Input id="writerName" name="writerName" placeholder="Enter writer's name" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="writerShare">Writer's Share (%)</Label>
+                  <Input 
+                    id="writerShare" 
+                    name="writerShare"
+                    type="number" 
+                    min="0" 
+                    max="100" 
+                    value={writerShare}
+                    readOnly
+                    className="bg-gray-100"
+                    placeholder="Writer's share percentage" 
+                    required 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="clefRightsShare">ClefRights Publisher Share (%)</Label>
+                  <Input 
+                    id="clefRightsShare" 
+                    name="clefRightsShare"
+                    type="number" 
+                    value={clefRightsShare}
+                    readOnly
+                    className="bg-gray-100"
+                    required 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="userPublisherShare">Your Publisher Share (%)</Label>
+                  <Input 
+                    id="userPublisherShare" 
+                    name="userPublisherShare"
+                    type="number" 
+                    min="0" 
+                    max="45" 
+                    value={userPublisherShare}
+                    onChange={(e) => handleShareChange(e.target.value)}
+                    placeholder="Enter your publisher share percentage" 
+                    required 
+                  />
+                  <p className="text-sm text-muted-foreground mt-2">
+                    If you wish to not have any role in administering your song, you may leave this as 0% and assign full publishing rights to ClefRights. 
+                    If you do this, you will not have to pay publisher registration or filing fees.
+                  </p>
+                </div>
+
+                <PRORadioGroup isPROmember={isPROmember} setIsPROmember={setIsPROmember} />
+                
+                {isPROmember === "yes" && (
+                  <PRODetailsForm 
+                    proName={proName}
+                    proNumber={proNumber}
+                    setProName={setProName}
+                    setProNumber={setProNumber}
+                  />
+                )}
+              </>
             )}
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? "Processing..." : "Submit Agreement"}
+              {isSubmitting ? "Processing..." : (isLogin ? "Login" : "Submit Agreement")}
             </Button>
           </CardFooter>
         </form>

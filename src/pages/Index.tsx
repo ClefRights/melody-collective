@@ -10,8 +10,8 @@ const Index = () => {
     navigate("/signup");
   };
 
-  const handlePayment = () => {
-    navigate("/signup", { state: { fromPurchase: true } });
+  const handleLogin = () => {
+    navigate("/signup", { state: { isLogin: true } });
   };
 
   return (
@@ -28,10 +28,10 @@ const Index = () => {
               Sign Up Now
             </Button>
             <Button 
-              onClick={handlePayment}
+              onClick={handleLogin}
               className="bg-green-500 text-white hover:bg-green-600"
             >
-              Quick Registration
+              Login
             </Button>
           </div>
         </div>
