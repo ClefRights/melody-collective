@@ -1,38 +1,57 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-// Mock data for demonstration - in a real app this would come from your database
-const mockData = {
-  accountHolder: {
-    name: "John Doe",
-    songwriterIPI: "123456789",
-    publisherIPI: "N/A", // This would be conditional based on publishing rights
-  },
-  works: [
-    {
-      title: "Sample Song 1",
-      iswc: "T-123.456.789-0",
-      songwriterPercentage: "50%",
-      publisherPercentage: "25%",
-      territories: "Worldwide",
-      recording: {
-        artist: "Artist Name",
-        label: "Record Label Co.",
-        isrc: "USRC17607839",
-      },
-    },
-    // Add more mock entries as needed
-  ],
-};
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { PlusCircle } from "lucide-react";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+  const { data: works } = useQuery({
+    queryKey: ['works'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('works')
+        .select('*');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: accountInfo } = useQuery({
+    queryKey: ['pro_information'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('pro_information')
+        .select('*')
+        .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const handleAddNewWork = () => {
+    navigate('/signup', { 
+      state: { 
+        isNewWork: true,
+        proInfo: accountInfo 
+      } 
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-[1600px] mx-auto space-y-6">
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Works Dashboard</CardTitle>
+            <Button onClick={handleAddNewWork} className="ml-auto">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add New Work
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-[250px_1fr] gap-6">
@@ -44,15 +63,19 @@ const Dashboard = () => {
                 <CardContent className="space-y-4">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Account Holder</p>
-                    <p className="text-sm">{mockData.accountHolder.name}</p>
+                    <p className="text-sm">{accountInfo?.name || 'Loading...'}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Songwriter IPI #</p>
-                    <p className="text-sm">{mockData.accountHolder.songwriterIPI}</p>
+                    <p className="text-sm">{accountInfo?.songwriter_ipi || 'Loading...'}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Publisher IPI #</p>
-                    <p className="text-sm">{mockData.accountHolder.publisherIPI}</p>
+                    <p className="text-sm">
+                      {accountInfo?.publisher_percentage > 0 
+                        ? (accountInfo?.publisher_ipi || 'Loading...') 
+                        : 'N/A'}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -83,16 +106,16 @@ const Dashboard = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockData.works.map((work, index) => (
+                    {works?.map((work, index) => (
                       <TableRow key={index}>
                         <TableCell>{work.title}</TableCell>
                         <TableCell>{work.iswc}</TableCell>
-                        <TableCell>{work.songwriterPercentage}</TableCell>
-                        <TableCell>{work.publisherPercentage}</TableCell>
+                        <TableCell>{work.songwriter_percentage}%</TableCell>
+                        <TableCell>{work.publisher_percentage}%</TableCell>
                         <TableCell>{work.territories}</TableCell>
-                        <TableCell className="bg-muted/50">{work.recording.artist}</TableCell>
-                        <TableCell className="bg-muted/50">{work.recording.label}</TableCell>
-                        <TableCell className="bg-muted/50">{work.recording.isrc}</TableCell>
+                        <TableCell className="bg-muted/50">{work.recording_artist}</TableCell>
+                        <TableCell className="bg-muted/50">{work.record_label}</TableCell>
+                        <TableCell className="bg-muted/50">{work.isrc}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

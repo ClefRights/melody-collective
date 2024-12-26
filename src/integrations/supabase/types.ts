@@ -9,7 +9,78 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      pro_information: {
+        Row: {
+          created_at: string
+          is_pro_member: boolean
+          pro_name: string | null
+          pro_number: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          is_pro_member?: boolean
+          pro_name?: string | null
+          pro_number?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          is_pro_member?: boolean
+          pro_name?: string | null
+          pro_number?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      works: {
+        Row: {
+          created_at: string
+          id: string
+          isrc: string | null
+          iswc: string | null
+          publisher_percentage: number | null
+          record_label: string | null
+          recording_artist: string | null
+          songwriter_percentage: number | null
+          territories: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          isrc?: string | null
+          iswc?: string | null
+          publisher_percentage?: number | null
+          record_label?: string | null
+          recording_artist?: string | null
+          songwriter_percentage?: number | null
+          territories?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          isrc?: string | null
+          iswc?: string | null
+          publisher_percentage?: number | null
+          record_label?: string | null
+          recording_artist?: string | null
+          songwriter_percentage?: number | null
+          territories?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
