@@ -27,7 +27,7 @@ const Dashboard = () => {
       const { data, error } = await supabase
         .from('pro_information')
         .select('*')
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -62,21 +62,21 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Account Holder</p>
-                    <p className="text-sm">{accountInfo?.name || 'Loading...'}</p>
+                    <p className="text-sm font-medium text-muted-foreground">PRO Member</p>
+                    <p className="text-sm">{accountInfo?.is_pro_member ? 'Yes' : 'No'}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Songwriter IPI #</p>
-                    <p className="text-sm">{accountInfo?.songwriter_ipi || 'Loading...'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Publisher IPI #</p>
-                    <p className="text-sm">
-                      {accountInfo?.publisher_percentage > 0 
-                        ? (accountInfo?.publisher_ipi || 'Loading...') 
-                        : 'N/A'}
-                    </p>
-                  </div>
+                  {accountInfo?.is_pro_member && (
+                    <>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">PRO Name</p>
+                        <p className="text-sm">{accountInfo?.pro_name || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">PRO Number</p>
+                        <p className="text-sm">{accountInfo?.pro_number || 'Not specified'}</p>
+                      </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
 
