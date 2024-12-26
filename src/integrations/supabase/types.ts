@@ -15,6 +15,8 @@ export type Database = {
           is_pro_member: boolean
           pro_name: string | null
           pro_number: string | null
+          publisher_ipi: string | null
+          songwriter_ipi: string | null
           updated_at: string
           user_id: string
         }
@@ -23,6 +25,8 @@ export type Database = {
           is_pro_member?: boolean
           pro_name?: string | null
           pro_number?: string | null
+          publisher_ipi?: string | null
+          songwriter_ipi?: string | null
           updated_at?: string
           user_id: string
         }
@@ -31,6 +35,8 @@ export type Database = {
           is_pro_member?: boolean
           pro_name?: string | null
           pro_number?: string | null
+          publisher_ipi?: string | null
+          songwriter_ipi?: string | null
           updated_at?: string
           user_id?: string
         }

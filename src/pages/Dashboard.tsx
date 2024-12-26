@@ -3,12 +3,14 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PlusCircle } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: works } = useQuery({
     queryKey: ['works'],
@@ -33,6 +35,39 @@ const Dashboard = () => {
     },
   });
 
+  const createTestAccount = useMutation({
+    mutationFn: async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("No user logged in");
+
+      const { error } = await supabase
+        .from('pro_information')
+        .upsert({
+          user_id: user.user.id,
+          is_pro_member: true,
+          pro_name: 'ASCAP',
+          pro_number: 'TEST123',
+          songwriter_ipi: '00000000',
+          publisher_ipi: '1111111111'
+        });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Test account created",
+        description: "Successfully created test PRO information"
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error creating test account",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleAddNewWork = () => {
     navigate('/signup', { 
       state: { 
@@ -48,10 +83,19 @@ const Dashboard = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Works Dashboard</CardTitle>
-            <Button onClick={handleAddNewWork} className="ml-auto">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add New Work
-            </Button>
+            <div className="flex gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => createTestAccount.mutate()}
+                disabled={createTestAccount.isPending}
+              >
+                Create Test Account
+              </Button>
+              <Button onClick={handleAddNewWork}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add New Work
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-[250px_1fr] gap-6">
@@ -74,6 +118,14 @@ const Dashboard = () => {
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">PRO Number</p>
                         <p className="text-sm">{accountInfo?.pro_number || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Songwriter IPI</p>
+                        <p className="text-sm">{accountInfo?.songwriter_ipi || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Publisher IPI</p>
+                        <p className="text-sm">{accountInfo?.publisher_ipi || 'Not specified'}</p>
                       </div>
                     </>
                   )}
