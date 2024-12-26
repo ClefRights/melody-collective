@@ -75,6 +75,14 @@ const Dashboard = () => {
                         <p className="text-sm font-medium text-muted-foreground">PRO Number</p>
                         <p className="text-sm">{accountInfo?.pro_number || 'Not specified'}</p>
                       </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Songwriter IPI</p>
+                        <p className="text-sm">{accountInfo?.songwriter_ipi || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Publisher IPI</p>
+                        <p className="text-sm">{accountInfo?.publisher_ipi || 'Not specified'}</p>
+                      </div>
                     </>
                   )}
                 </CardContent>
