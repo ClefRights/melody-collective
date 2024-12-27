@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,17 @@ const CopyrightRegistration = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { publisherShare, email } = location.state as LocationState;
+  
+  // Check if we have the required data, if not redirect to signup
+  useEffect(() => {
+    if (!location.state?.publisherShare) {
+      navigate('/signup');
+    }
+  }, [location.state, navigate]);
+
+  // Use optional chaining and provide default values
+  const publisherShare = location.state?.publisherShare || "0";
+  const email = location.state?.email;
   
   const [willFileOwn, setWillFileOwn] = useState<string>("");
   const [wantsClefrightsFiling, setWantsClefrightsFiling] = useState<string>("");
@@ -46,6 +56,11 @@ const CopyrightRegistration = () => {
       setIsSubmitting(false);
     }
   };
+
+  // If we don't have publisherShare, render nothing while redirecting
+  if (!location.state?.publisherShare) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#4B5D78] p-4">
