@@ -147,13 +147,14 @@ const Dashboard = () => {
                       <TableHead className="bg-muted/50 w-[200px]">Record Label</TableHead>
                       <TableHead className="bg-muted/50 w-[150px]">ISRC</TableHead>
                       <TableHead className="bg-muted/50 w-[150px]">
-                        UPC
+                        <div>UPC</div>
+                        <div className="text-xs text-muted-foreground">(optional)</div>
                         <Tooltip>
                           <TooltipTrigger>
                             <Info className="h-4 w-4 ml-1 inline-block" />
                           </TooltipTrigger>
                           <TooltipContent className="max-w-[300px] text-sm">
-                            The Universal Product Code (UPC) is issued by a work's distributor, and it is used for tracking via Nielsen's Luminate. Your Distribution Service Provider will have issued you a code as part of releasing your music. You may enter the code here. If you do not have UPC, contact your distributor. Alternatively, you may purchase one online via a record label service provider.
+                            The Universal Product Code (UPC) is issued by a work's distributor, and it is used for tracking via Nielsen's Luminate. Your Distribution Service Provider will have issued you a code as part of releasing your music. You may enter the code here. If you do not have a UPC, contact your distributor. Alternatively, you may purchase one online via a record label service provider.
                           </TooltipContent>
                         </Tooltip>
                       </TableHead>
