@@ -78,6 +78,14 @@ const Dashboard = () => {
                     <p className="text-sm font-medium text-muted-foreground">PRO Member</p>
                     <p className="text-sm">{accountInfo?.is_pro_member ? 'Yes' : 'No'}</p>
                   </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Songwriter IPI #</p>
+                    <p className="text-sm">{accountInfo?.songwriter_ipi || '#000000000'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Publisher IPI #</p>
+                    <p className="text-sm">{accountInfo?.publisher_ipi || '#000000000'}</p>
+                  </div>
                   {accountInfo?.is_pro_member && (
                     <>
                       <div>
@@ -87,14 +95,6 @@ const Dashboard = () => {
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">PRO Number</p>
                         <p className="text-sm">{accountInfo?.pro_number || 'Not specified'}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Songwriter IPI</p>
-                        <p className="text-sm">{accountInfo?.songwriter_ipi || '#000000000'}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Publisher IPI</p>
-                        <p className="text-sm">{accountInfo?.publisher_ipi || '#000000000'}</p>
                       </div>
                     </>
                   )}
