@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, MapPin } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -24,12 +24,16 @@ const Dashboard = () => {
   const { data: accountInfo } = useQuery({
     queryKey: ['pro_information'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: proInfo, error: proError } = await supabase
         .from('pro_information')
         .select('*')
         .maybeSingle();
-      if (error) throw error;
-      return data;
+      if (proError) throw proError;
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+
+      return { ...proInfo, email: user?.email };
     },
   });
 
@@ -40,6 +44,11 @@ const Dashboard = () => {
         proInfo: accountInfo 
       } 
     });
+  };
+
+  const handleUpdateAddress = () => {
+    // This is a placeholder for the address update functionality
+    console.log("Update address clicked");
   };
 
   return (
@@ -62,6 +71,10 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
+                    <p className="text-sm font-medium text-muted-foreground">Name</p>
+                    <p className="text-sm">{accountInfo?.email?.split('@')[0] || 'Not specified'}</p>
+                  </div>
+                  <div>
                     <p className="text-sm font-medium text-muted-foreground">PRO Member</p>
                     <p className="text-sm">{accountInfo?.is_pro_member ? 'Yes' : 'No'}</p>
                   </div>
@@ -77,14 +90,24 @@ const Dashboard = () => {
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">Songwriter IPI</p>
-                        <p className="text-sm">{accountInfo?.songwriter_ipi || 'Not specified'}</p>
+                        <p className="text-sm">{accountInfo?.songwriter_ipi || '#000000000'}</p>
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">Publisher IPI</p>
-                        <p className="text-sm">{accountInfo?.publisher_ipi || 'Not specified'}</p>
+                        <p className="text-sm">{accountInfo?.publisher_ipi || '#000000000'}</p>
                       </div>
                     </>
                   )}
+                  <div className="pt-4">
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      onClick={handleUpdateAddress}
+                    >
+                      <MapPin className="mr-2 h-4 w-4" />
+                      Update Mailing Address
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -93,21 +116,22 @@ const Dashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Work Title</TableHead>
-                      <TableHead>ISWC</TableHead>
-                      <TableHead>Songwriter %</TableHead>
-                      <TableHead>Publisher %</TableHead>
-                      <TableHead>Territories</TableHead>
+                      <TableHead 
+                        className="bg-muted/50 font-semibold text-foreground" 
+                        colSpan={5}
+                      >
+                        Publisher Information
+                      </TableHead>
                       <TableHead className="bg-muted/50" colSpan={3}>
                         Master Recording
                       </TableHead>
                     </TableRow>
                     <TableRow>
-                      <TableHead className="w-[200px]"></TableHead>
-                      <TableHead className="w-[150px]"></TableHead>
-                      <TableHead className="w-[120px]"></TableHead>
-                      <TableHead className="w-[120px]"></TableHead>
-                      <TableHead className="w-[120px]"></TableHead>
+                      <TableHead className="w-[200px]">Work Title</TableHead>
+                      <TableHead className="w-[150px]">ISWC</TableHead>
+                      <TableHead className="w-[120px]">Songwriter %</TableHead>
+                      <TableHead className="w-[120px]">Publisher %</TableHead>
+                      <TableHead className="w-[120px]">Territories</TableHead>
                       <TableHead className="bg-muted/50 w-[200px]">Recording Artist</TableHead>
                       <TableHead className="bg-muted/50 w-[200px]">Record Label</TableHead>
                       <TableHead className="bg-muted/50 w-[150px]">ISRC</TableHead>
