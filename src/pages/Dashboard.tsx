@@ -86,6 +86,10 @@ const Dashboard = () => {
                     <p className="text-sm font-medium text-muted-foreground">Publisher IPI #</p>
                     <p className="text-sm">{accountInfo?.publisher_ipi || '#000000000'}</p>
                   </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">MLC/HFA Publisher Account #</p>
+                    <p className="text-sm">{accountInfo?.mlc_hfa_publisher_account || 'Not specified'}</p>
+                  </div>
                   {accountInfo?.is_pro_member && (
                     <>
                       <div>
@@ -118,7 +122,7 @@ const Dashboard = () => {
                     <TableRow>
                       <TableHead 
                         className="bg-muted/50 font-semibold text-foreground" 
-                        colSpan={5}
+                        colSpan={6}
                       >
                         Publisher Information
                       </TableHead>
@@ -132,6 +136,7 @@ const Dashboard = () => {
                       <TableHead className="w-[120px]">Songwriter %</TableHead>
                       <TableHead className="w-[120px]">Publisher %</TableHead>
                       <TableHead className="w-[120px]">Territories</TableHead>
+                      <TableHead className="w-[150px]">MLC/HFA Song Code</TableHead>
                       <TableHead className="bg-muted/50 w-[200px]">Recording Artist</TableHead>
                       <TableHead className="bg-muted/50 w-[200px]">Record Label</TableHead>
                       <TableHead className="bg-muted/50 w-[150px]">ISRC</TableHead>
@@ -145,6 +150,7 @@ const Dashboard = () => {
                         <TableCell>{work.songwriter_percentage}%</TableCell>
                         <TableCell>{work.publisher_percentage}%</TableCell>
                         <TableCell>{work.territories}</TableCell>
+                        <TableCell>{work.mlc_hfa_song_code}</TableCell>
                         <TableCell className="bg-muted/50">{work.recording_artist}</TableCell>
                         <TableCell className="bg-muted/50">{work.record_label}</TableCell>
                         <TableCell className="bg-muted/50">{work.isrc}</TableCell>

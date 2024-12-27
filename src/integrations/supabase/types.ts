@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           created_at: string
           is_pro_member: boolean
+          mlc_hfa_publisher_account: string | null
           pro_name: string | null
           pro_number: string | null
           publisher_ipi: string | null
@@ -23,6 +24,7 @@ export type Database = {
         Insert: {
           created_at?: string
           is_pro_member?: boolean
+          mlc_hfa_publisher_account?: string | null
           pro_name?: string | null
           pro_number?: string | null
           publisher_ipi?: string | null
@@ -33,6 +35,7 @@ export type Database = {
         Update: {
           created_at?: string
           is_pro_member?: boolean
+          mlc_hfa_publisher_account?: string | null
           pro_name?: string | null
           pro_number?: string | null
           publisher_ipi?: string | null
@@ -48,6 +51,7 @@ export type Database = {
           id: string
           isrc: string | null
           iswc: string | null
+          mlc_hfa_song_code: string | null
           publisher_percentage: number | null
           record_label: string | null
           recording_artist: string | null
@@ -62,6 +66,7 @@ export type Database = {
           id?: string
           isrc?: string | null
           iswc?: string | null
+          mlc_hfa_song_code?: string | null
           publisher_percentage?: number | null
           record_label?: string | null
           recording_artist?: string | null
@@ -76,6 +81,7 @@ export type Database = {
           id?: string
           isrc?: string | null
           iswc?: string | null
+          mlc_hfa_song_code?: string | null
           publisher_percentage?: number | null
           record_label?: string | null
           recording_artist?: string | null
