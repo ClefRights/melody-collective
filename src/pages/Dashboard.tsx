@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { PlusCircle, MapPin } from "lucide-react";
+import { PlusCircle, MapPin, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -126,7 +132,7 @@ const Dashboard = () => {
                       >
                         Publisher Information
                       </TableHead>
-                      <TableHead className="bg-muted/50" colSpan={3}>
+                      <TableHead className="bg-muted/50" colSpan={4}>
                         Master Recording
                       </TableHead>
                     </TableRow>
@@ -140,6 +146,17 @@ const Dashboard = () => {
                       <TableHead className="bg-muted/50 w-[200px]">Recording Artist</TableHead>
                       <TableHead className="bg-muted/50 w-[200px]">Record Label</TableHead>
                       <TableHead className="bg-muted/50 w-[150px]">ISRC</TableHead>
+                      <TableHead className="bg-muted/50 w-[150px]">
+                        UPC
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 ml-1 inline-block" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-[300px] text-sm">
+                            The Universal Product Code (UPC) is issued by a work's distributor, and it is used for tracking via Nielsen's Luminate. Your Distribution Service Provider will have issued you a code as part of releasing your music. You may enter the code here. If you do not have UPC, contact your distributor. Alternatively, you may purchase one online via a record label service provider.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -154,6 +171,7 @@ const Dashboard = () => {
                         <TableCell className="bg-muted/50">{work.recording_artist}</TableCell>
                         <TableCell className="bg-muted/50">{work.record_label}</TableCell>
                         <TableCell className="bg-muted/50">{work.isrc}</TableCell>
+                        <TableCell className="bg-muted/50">{work.upc}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

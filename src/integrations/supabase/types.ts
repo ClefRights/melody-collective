@@ -58,6 +58,7 @@ export type Database = {
           songwriter_percentage: number | null
           territories: string | null
           title: string
+          upc: string | null
           updated_at: string
           user_id: string
         }
@@ -73,6 +74,7 @@ export type Database = {
           songwriter_percentage?: number | null
           territories?: string | null
           title: string
+          upc?: string | null
           updated_at?: string
           user_id: string
         }
@@ -88,6 +90,7 @@ export type Database = {
           songwriter_percentage?: number | null
           territories?: string | null
           title?: string
+          upc?: string | null
           updated_at?: string
           user_id?: string
         }
