@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLocation } from "react-router-dom";
 
 interface LocationState {
   proName: string;
@@ -14,7 +13,16 @@ interface LocationState {
 const PublishingCompanyForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { proName } = location.state as LocationState;
+  
+  // Check if we have the required data, if not redirect to signup
+  useEffect(() => {
+    if (!location.state?.proName) {
+      navigate('/signup');
+    }
+  }, [location.state, navigate]);
+
+  // Use optional chaining and provide a default value
+  const proName = location.state?.proName || '';
   
   const [hasPublishingCompany, setHasPublishingCompany] = useState<string>("no");
   const [wantsPublishingCompany, setWantsPublishingCompany] = useState<string>("no");
@@ -35,6 +43,11 @@ const PublishingCompanyForm = () => {
   const handleConfirmZeroShare = () => {
     navigate("/rights-clearance");
   };
+
+  // If we don't have proName, render nothing while redirecting
+  if (!location.state?.proName) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#4B5D78] p-4">
