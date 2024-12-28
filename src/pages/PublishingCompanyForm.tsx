@@ -8,43 +8,58 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 
 interface LocationState {
   proName: string;
+  email?: string;
+  publisherShare?: string;
 }
 
 const PublishingCompanyForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Check if we have the required data, if not redirect to signup
   useEffect(() => {
     if (!location.state?.proName) {
       navigate('/signup');
     }
   }, [location.state, navigate]);
 
-  // Use optional chaining and provide a default value
-  const proName = location.state?.proName || '';
+  const { proName = '', email, publisherShare } = location.state as LocationState || {};
   
   const [hasPublishingCompany, setHasPublishingCompany] = useState<string>("no");
   const [wantsPublishingCompany, setWantsPublishingCompany] = useState<string>("no");
   const [publishingCompanyName, setPublishingCompanyName] = useState("");
-  const [publisherShare, setPublisherShare] = useState("45");
+  const [publisherShare2, setPublisherShare] = useState(publisherShare || "45");
   const [showShareConfirmation, setShowShareConfirmation] = useState(false);
 
   const handleSubmit = () => {
     if (hasPublishingCompany === "yes" || (hasPublishingCompany === "no" && wantsPublishingCompany === "yes")) {
-      navigate("/rights-clearance");
-    } else if (publisherShare === "0") {
+      navigate("/rights-clearance", {
+        state: {
+          publisherShare: publisherShare2,
+          email,
+          publishingCompanyName
+        }
+      });
+    } else if (publisherShare2 === "0") {
       setShowShareConfirmation(true);
     } else {
-      navigate("/rights-clearance");
+      navigate("/rights-clearance", {
+        state: {
+          publisherShare: publisherShare2,
+          email
+        }
+      });
     }
   };
 
   const handleConfirmZeroShare = () => {
-    navigate("/rights-clearance");
+    navigate("/rights-clearance", {
+      state: {
+        publisherShare: "0",
+        email
+      }
+    });
   };
 
-  // If we don't have proName, render nothing while redirecting
   if (!location.state?.proName) {
     return null;
   }

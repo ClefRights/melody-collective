@@ -1,16 +1,29 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+
+interface LocationState {
+  email?: string;
+  publisherShare?: string;
+}
 
 const PROSelection = () => {
   const [selectedPRO, setSelectedPRO] = useState<"ASCAP" | "BMI" | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { email, publisherShare } = location.state as LocationState || {};
 
   const handleSubmit = () => {
     if (selectedPRO) {
-      navigate("/rights-clearance");
+      navigate("/publishing-company", {
+        state: {
+          proName: selectedPRO,
+          email,
+          publisherShare
+        }
+      });
     }
   };
 
