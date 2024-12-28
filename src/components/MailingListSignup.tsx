@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export const MailingListSignup = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -15,17 +16,31 @@ export const MailingListSignup = () => {
     setIsSubmitting(true);
     
     try {
-      // We'll implement the actual MailChimp integration after getting the API key
-      console.log("Submitting:", { name, email });
+      const { data: { publicUrl } } = supabase.storage.from('edge-functions').getPublicUrl('subscribe-to-mailchimp');
+      const response = await fetch(publicUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to subscribe');
+      }
+
       toast({
         title: "Thanks for signing up!",
-        description: "We'll keep you updated with our latest news.",
+        description: "Please check your email to confirm your subscription.",
       });
       setIsVisible(false);
     } catch (error) {
+      console.error('Subscription error:', error);
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again later.",
+        description: error.message || "Something went wrong. Please try again later.",
         variant: "destructive",
       });
     } finally {
