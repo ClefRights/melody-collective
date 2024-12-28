@@ -4,18 +4,27 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface LocationState {
   publisherShare?: string;
   fromPurchase?: boolean;
+  email?: string;
 }
 
 const RightsClearance = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const { publisherShare, fromPurchase } = location.state as LocationState || {};
+  
+  // Add check for required state
+  useEffect(() => {
+    if (!location.state?.publisherShare) {
+      navigate('/signup');
+    }
+  }, [location.state, navigate]);
+
+  const { publisherShare = "0", email } = location.state as LocationState || {};
   
   const [hasSamples, setHasSamples] = useState<string>("no");
   const [hasMedleys, setHasMedleys] = useState<string>("no");
@@ -33,10 +42,16 @@ const RightsClearance = () => {
     navigate("/copyright-registration", { 
       state: { 
         publisherShare,
-        fromPurchase 
+        email,
+        fromPurchase: location.state?.fromPurchase 
       } 
     });
   };
+
+  // Early return if we don't have the required state
+  if (!location.state?.publisherShare) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#4B5D78] p-4">
