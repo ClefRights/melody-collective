@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { MailingListSignup } from "@/components/MailingListSignup";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -81,6 +82,7 @@ const Index = () => {
           <p>If you would like a video meeting, feel free to book a meeting via her Calendly. The link is: <a href="https://calendly.com/marylucia-maryluciadarst" className="text-blue-600 hover:text-blue-800">https://calendly.com/marylucia-maryluciadarst</a>.</p>
         </div>
       </div>
+      <MailingListSignup />
     </div>
   );
 };
