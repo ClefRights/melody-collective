@@ -7,6 +7,7 @@ import PRODetailsForm from "@/components/forms/PRODetailsForm";
 import LoginForm from "@/components/forms/LoginForm";
 import SignupDetailsForm from "@/components/forms/SignupDetailsForm";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 const SignupForm = () => {
   const { toast } = useToast();
@@ -40,27 +41,54 @@ const SignupForm = () => {
     }
   };
 
+  const subscribeToMailingList = async (email: string, name: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('subscribe-to-mailchimp', {
+        body: { email, name }
+      });
+
+      if (error) {
+        console.error('Mailing list subscription error:', error);
+      }
+    } catch (error) {
+      console.error('Failed to subscribe to mailing list:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (isPROmember === "yes") {
-      navigate("/publishing-company", {
-        state: {
-          proName,
-          email,
-          publisherShare: userPublisherShare
-        }
+    try {
+      // Subscribe to mailing list
+      await subscribeToMailingList(email, writerName);
+
+      if (isPROmember === "yes") {
+        navigate("/publishing-company", {
+          state: {
+            proName,
+            email,
+            publisherShare: userPublisherShare
+          }
+        });
+      } else {
+        navigate("/pro-selection", {
+          state: {
+            email,
+            publisherShare: userPublisherShare
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      toast({
+        title: "Error",
+        description: "There was a problem processing your submission. Please try again.",
+        variant: "destructive",
       });
-    } else {
-      navigate("/pro-selection", {
-        state: {
-          email,
-          publisherShare: userPublisherShare
-        }
-      });
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   return (
