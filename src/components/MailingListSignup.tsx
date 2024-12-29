@@ -16,19 +16,12 @@ export const MailingListSignup = () => {
     setIsSubmitting(true);
     
     try {
-      const { data: { publicUrl } } = supabase.storage.from('edge-functions').getPublicUrl('subscribe-to-mailchimp');
-      const response = await fetch(publicUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email }),
+      const { data, error } = await supabase.functions.invoke('subscribe-to-mailchimp', {
+        body: { name, email }
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to subscribe');
+      if (error) {
+        throw new Error(error.message || 'Failed to subscribe');
       }
 
       toast({
