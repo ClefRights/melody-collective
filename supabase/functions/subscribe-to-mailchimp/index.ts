@@ -21,7 +21,7 @@ serve(async (req) => {
   try {
     const { email, name } = await req.json();
     const MAILCHIMP_API_KEY = Deno.env.get('MAILCHIMP_API_KEY');
-    const AUDIENCE_ID = "64c9c2c0e7"; // Replace this with your actual Mailchimp Audience ID
+    const AUDIENCE_ID = "aa16fd2c27"; // Your Mailchimp Audience ID
 
     if (!MAILCHIMP_API_KEY) {
       throw new Error('Missing MailChimp API key');
