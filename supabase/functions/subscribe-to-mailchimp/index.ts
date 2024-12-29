@@ -21,7 +21,7 @@ serve(async (req) => {
   try {
     const { email, name } = await req.json();
     const MAILCHIMP_API_KEY = Deno.env.get('MAILCHIMP_API_KEY');
-    const AUDIENCE_ID = "YOUR_AUDIENCE_ID"; // Replace with your actual audience ID
+    const AUDIENCE_ID = "64c9c2c0e7"; // Replace this with your actual Mailchimp Audience ID
 
     if (!MAILCHIMP_API_KEY) {
       throw new Error('Missing MailChimp API key');
@@ -38,6 +38,8 @@ serve(async (req) => {
       },
     };
 
+    console.log('Attempting to subscribe:', email);
+
     const response = await fetch(
       `https://${datacenter}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members`,
       {
@@ -51,6 +53,7 @@ serve(async (req) => {
     );
 
     const data = await response.json();
+    console.log('Mailchimp response:', data);
 
     if (!response.ok) {
       throw new Error(data.detail || 'Failed to subscribe');
@@ -65,6 +68,7 @@ serve(async (req) => {
     );
 
   } catch (error) {
+    console.error('Subscription error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
