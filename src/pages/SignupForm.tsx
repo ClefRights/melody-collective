@@ -55,6 +55,20 @@ const SignupForm = () => {
     }
   };
 
+  const sendNotificationEmail = async (formData: any) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-notification-email', {
+        body: formData
+      });
+
+      if (error) {
+        console.error('Failed to send notification email:', error);
+      }
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -62,6 +76,18 @@ const SignupForm = () => {
     try {
       // Subscribe to mailing list
       await subscribeToMailingList(email, writerName);
+
+      // Send notification email
+      await sendNotificationEmail({
+        email,
+        songTitle,
+        writerName,
+        writerShare,
+        userPublisherShare,
+        clefRightsShare,
+        proName,
+        proNumber
+      });
 
       if (isPROmember === "yes") {
         navigate("/publishing-company", {
