@@ -17,7 +17,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-[#4B5D78]">
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-4 py-12 relative">
+        <img 
+          src="/lovable-uploads/153abd44-ca73-47e3-af18-2f74ee4ab66b.png"
+          alt="ClefRights Logo"
+          className="absolute top-4 left-4 w-16 h-16 object-contain opacity-90"
+        />
         <div className="text-center space-y-6 mb-12">
           <h1 className="text-5xl font-bold mb-4 text-[#FFFFF0] font-sans">Welcome to ClefRights</h1>
           <p className="text-xl text-[#FFFFF0]/80 font-light">Manage your music rights with confidence</p>
